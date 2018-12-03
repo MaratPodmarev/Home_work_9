@@ -1,0 +1,50 @@
+import json
+from datetime import datetime
+from collections import Counter
+
+
+class Timer:
+    def __init__(self, name):
+        self.name = name
+
+    def __enter__(self):
+        self.start = datetime.now()
+        print('Время запуска кода в менеджере контекста {}'.format(self .start))
+
+    def __exit__(self, start, end, interval):
+        self.end = datetime.now()
+        self.interval = self.end - self.start
+        print('Время окончания работы кода {}'.format(self.end))
+        print('Было потрачено времени на выполнение кода {}'.format(self.interval))
+
+
+def sort_by_items(input_str):
+    return input_str[:][1]
+
+
+def top_of_words(file_name):
+    news_list2 = []
+    words_list = []
+    top_words = []
+    with open(file_name, encoding='utf-8') as f:
+        json_data = json.load(f)
+        for data in json_data.values():
+            news_dict = data['channel']
+        for items in news_dict.items():
+            news_list1 = news_dict['items']
+        for news in news_list1:
+            news_list2.extend(news['description'].split(' '))
+        for i in news_list2[:]:
+            if len(i) > 6:
+                words_list.append(i)
+        words_counter = Counter(words_list)
+        words_list = list(words_counter.items())
+        words_list.sort(key=sort_by_items)
+        top_list = words_list[:-11:-1]
+        for key in top_list:
+            top_words.append(key[0])
+        print('Топ 10 наиболее популярных слов длиннее 6 букв: ', '\n', top_words)
+
+
+with Timer(top_of_words) as timer:
+    top_of_words('newsafr.json')
